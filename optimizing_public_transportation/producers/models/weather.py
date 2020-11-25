@@ -70,36 +70,35 @@ class Weather(Producer):
 
     def run(self, month):
         self._set_weather(month)
-
-        #
+        
         #
         # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
         # specify the Avro schemas and verify that you are using the correct Content-Type header.
         #
-        #
-        logger.info("weather kafka proxy integration incomplete - skipping")
+        logger.info("weather kafka proxy implementing requests.post")
         
         resp = requests.post(
                             # TODO: What URL should be POSTed to?
                             f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
                             # TODO: What Headers need to bet set?
                             headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
-                            data=json.dumps(
-                                            {"value_schema": value_schema,
-                                             "key_schema": key_schema,
-                                             "records": [{"value":{"temperature": self.temp, "status":self.status} }]
+                            data=json.dumps({
+                                            "key_schema": json.dumps(Weather.key_schema),
+                                            "value_schema": json.dumps(Weather.value_schema),
+                                             "records": [
+                                                         {"key": {"timestamp": self.time_millis()},
+                                                          "value":{"temperature": self.temp, "status": self.status.name} 
+                                                         }]
                                             })
                             )
         
         try:
             resp.raise_for_status()
+            logger.info("weather kafka proxy requests.post implemented")
         except:
             print(f"Failed to send data to REST Proxy {json.dumps(resp.json(), indent=2)}")
 
-        print(f"Sent data to REST Proxy {json.dumps(resp.json(), indent=2)}")
+        #print(f"Sent data to REST Proxy {json.dumps(resp.json(), indent=2)}")
 
-        logger.debug(
-            "sent weather data to kafka, temp: %s, status: %s",
-            self.temp,
-            self.status.name,
-        )
+        #logger.debug("sent weather data to kafka, temp: %s, status: %s", self.temp, self.status.name,)
+        logger.info("sent weather data to kafka, temp: %s, status: %s", self.temp, self.status.name,)

@@ -24,13 +24,9 @@ class Station(Producer):
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
         self.name = name
         station_name = (self.name.lower().replace("/", "_and_").replace(" ", "_").replace("-", "_").replace("'", "") )
-
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
+        
+        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of replicas
+        
         topic_name = f"com.udacity.cta.{station_name}" # TODO: Come up with a better topic name
         super().__init__(
                         topic_name,
@@ -66,7 +62,7 @@ class Station(Producer):
                                 "train_id": train.train_id,
                                 "direction": direction,
                                 "line": self.color.name,
-                                "train_status": train.status,
+                                "train_status": train.status.name,
                                 "prev_station_id": prev_station_id,
                                 "prev_direction": prev_direction }
                             )
